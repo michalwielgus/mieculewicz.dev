@@ -1,7 +1,9 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { Link, graphql } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
 import parse from "html-react-parser"
+import Prism from "prismjs"
+import PrismJsx from "prismjs/components/prism-jsx.min"
 
 // We're using Gutenberg so we need the block styles
 // these are copied into this project due to a conflict in the postCSS
@@ -21,6 +23,10 @@ const BlogPostTemplate = ({ data: { previous, next, post } }) => {
     alt: post.featuredImage?.node?.alt || ``,
   }
 
+  useEffect(() => {
+    Prism.highlightAll()
+  })
+
   return (
     <Layout>
       <Seo title={post.title} description={post.excerpt} />
@@ -31,22 +37,26 @@ const BlogPostTemplate = ({ data: { previous, next, post } }) => {
         itemType="http://schema.org/Article"
       >
         <header>
-          <h1 itemProp="headline">{parse(post.title)}</h1>
-
-          <p>{post.date}</p>
-
-          {/* if we have a featured image for this post let's display it */}
           {featuredImage?.data && (
             <GatsbyImage
               image={featuredImage.data}
               alt={featuredImage.alt}
-              style={{ marginBottom: 50 }}
+              style={{ marginBottom: 40 }}
+              width={960}
+              height={560}
             />
           )}
+          <div className="article-header">
+            <p>{post.date}</p>
+            <h1 itemProp="headline">{parse(post.title)}</h1>
+          </div>
+          {/* if we have a featured image for this post let's display it */}
         </header>
 
         {!!post.content && (
-          <section itemProp="articleBody">{parse(post.content)}</section>
+          <section className="article-body" itemProp="articleBody">
+            {parse(post.content)}
+          </section>
         )}
 
         <hr />
